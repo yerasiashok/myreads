@@ -1,7 +1,6 @@
 import React from 'react'
 import './App.css'
 
-
 class BookShelfList extends React.Component {
   render() {
     return (  
@@ -31,10 +30,7 @@ class BookShelfList extends React.Component {
             ))}
           </ol>
         </div>
-      </div>
-
-      
-     
+      </div>          
     )
   }
 }
