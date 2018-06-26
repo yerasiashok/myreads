@@ -18,6 +18,19 @@ class SearchComponent extends Component {
     this.setState({query})
   }
 
+  compareArray = (fromSearch, fromShelf) => {
+    for (var j = fromSearch.length - 1; j >= 0; j--)
+    {
+      for (var i = fromShelf.length - 1; i >= 0; i--) {
+        if (fromShelf[i].id === fromSearch[j].id) {
+          fromSearch[j] = fromShelf[i]
+          break
+        }
+      }
+    }
+    return fromSearch
+  }
+
   render() {
     const { books} = this.state
     const { query } = this.state
@@ -25,12 +38,11 @@ class SearchComponent extends Component {
     if (query) {
       BooksAPI.search(query).then((searchList) => {
         this.setState((state) => ({
-          books: (searchList.error) ? []:searchList.map(book => Object.assign(book, {"shelf" : "none"}))
+          books: (searchList.error) ? []: this.compareArray(searchList, this.props.booksFromShelf)
        }))
       })
-
     } else {
-        isNotEmptyQuery = false
+      isNotEmptyQuery = false
     }
     return (
       <div className="search-books">
@@ -43,7 +55,7 @@ class SearchComponent extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {isNotEmptyQuery && books.length && books.map((book) => (
+            {isNotEmptyQuery && books.map((book) => (
               <li key={book.id}>
                 <div className="book">
                   <div className="book-top">
@@ -51,7 +63,7 @@ class SearchComponent extends Component {
                       <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                     )}
                     <div className="book-shelf-changer">
-                      <select value={book.shelf} onChange={(e) => this.props.onChangeShelf(book, e.target.value)}>
+                      <select value={book.shelf ? book.shelf : "none"} onChange={(e) => this.props.onChangeShelf(book, e.target.value)}>
                         <option value="move" disabled>Move to...</option>
                         <option value="currentlyReading">Currently Reading</option>
                         <option value="wantToRead">Want to Read</option>
